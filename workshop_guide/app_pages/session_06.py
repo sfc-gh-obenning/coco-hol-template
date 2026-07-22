@@ -3,10 +3,14 @@ from components import render_session_header, render_prompt, render_explanation,
 
 render_session_header(6, "Streamlit", "{{TIME_SESSION_6}}", "{{DUR_SESSION_6}}", "Operations dashboard with AI chat interface")
 
+st.warning("""
+:material/info: **This section is optional.** If you're running low on time, you can skip this session — the core AI platform (Semantic View, Search, Agent) is already complete from Sessions 1–4. This session adds a visual frontend.
+""")
+
 render_technologies_used([
-    {"name": "Streamlit in Snowflake (SiS)", "description": "Deploy Python-based data apps directly within Snowflake. Apps run on container runtime with full Python package support.", "icon": "web"},
-    {"name": "Compute Pool", "description": "A managed pool of container nodes that powers SiS apps. Provides CPU/GPU resources and auto-scales.", "icon": "memory"},
-    {"name": "st.connection(\"snowflake\")", "description": "The Streamlit connection API for Snowflake on container runtime. No credentials needed — inherits the logged-in user's session.", "icon": "terminal"},
+    {"name": "Streamlit in Snowflake (SiS)", "description": "Deploy Python-based data apps directly within Snowflake. Apps run on Snowflake's warehouse runtime using only built-in packages — no external network access required.", "icon": "web"},
+    {"name": "Workspaces", "description": "An IDE-like environment in Snowsight where you can author, preview, and deploy Streamlit apps with Cortex Code assistance.", "icon": "code"},
+    {"name": "st.connection(\"snowflake\")", "description": "The Streamlit connection API for Snowflake. No credentials needed — inherits the logged-in user's session.", "icon": "terminal"},
 ])
 
 st.markdown("---")
@@ -20,71 +24,77 @@ Paste the prompts below into Cortex Code **within Workspaces** so the generated 
 """)
 
 
-PROMPT_6_1 = """In {{DATABASE_NAME}}.{{SCHEMA_NAME}}, create a Streamlit app called {{STREAMLIT_APP_NAME}} that runs on the container runtime.
+PROMPT_6_1 = """In Workspaces, create a Streamlit app called {{STREAMLIT_APP_NAME}} in {{DATABASE_NAME}}.{{SCHEMA_NAME}}.
 
-First, create a compute pool:
-- Name: {{COMPUTE_POOL_NAME}}
-- Use the CPU_X64_S instance family
-- Min and max nodes of 1
+The app should use ONLY built-in Streamlit features (no external pip packages like plotly — use st.bar_chart, st.line_chart, st.metric, and st.dataframe instead). This avoids needing External Access Integrations which are restricted on trial accounts.
 
-Then create the Streamlit app with these 2 pages:
+Build 2 pages:
 
 PAGE 1 - Operations Dashboard:
 {{STREAMLIT_PAGE1_DESCRIPTION}}
+- Use st.bar_chart and st.line_chart for visualizations (NOT plotly)
+- Use st.metric for KPI cards
+- Use st.dataframe for tables
 
 PAGE 2 - Intelligence Chat:
 - A chat interface using our {{AGENT_NAME}} via SNOWFLAKE.CORTEX.AGENT()
 - Sidebar with summary stats from the data
 
-Important for container runtime:
-- Create an External Access Integration for pypi.org and files.pythonhosted.org
-- Include a pyproject.toml with dependencies: ["streamlit[snowflake]>=1.50.0", "plotly"]
-- Use st.connection("snowflake") for the connection
-- Make it visually clean with st.columns
+Important:
+- Use st.connection("snowflake") for the connection — do NOT use get_active_session()
+- Do NOT include plotly or any external packages in dependencies
+- Only use streamlit built-in chart types (st.bar_chart, st.line_chart, st.area_chart)
+- Make it visually clean with st.columns for layout
 
-Execute all SQL."""
+Generate all the app code."""
 
 render_prompt("Prompt 6.1", "Create the Streamlit App", PROMPT_6_1)
-
-
-PROMPT_6_2 = """Verify the Streamlit app and compute pool:
-
-1. SHOW COMPUTE POOLS;
-2. SHOW STREAMLITS IN SCHEMA {{DATABASE_NAME}}.{{SCHEMA_NAME}};
-3. Describe the streamlit {{STREAMLIT_APP_NAME}};
-
-Provide the direct URL to open the app in Snowsight."""
-
-render_prompt("Prompt 6.2", "Verify & Access the App", PROMPT_6_2)
 
 st.success("""
 :material/rocket_launch: **Preview and Deploy your app!**
 
 Once Cortex Code has generated your app files in Workspaces:
 
-1. **Run** — Click the **Run** button (▶️) in the top-right of the Workspaces editor to preview your app.
+1. **Run** — Click the **Run** button (▶️) in the top-right of the Workspaces editor to preview your app locally.
 
-2. **Deploy** — When happy with the preview, click **Deploy** to publish the app to your Snowflake account.
+2. **Deploy** — When happy with the preview, click **Deploy** to publish the app to your Snowflake account so others with the appropriate role can access it.
 
 Try modifying the app (add a chart, change KPI labels) and re-run to see changes live!
 """)
 
 render_explanation("What this prompt does", """
-Creates a full Streamlit in Snowflake application with an operations dashboard and AI chat connected to your {{AGENT_NAME}}.
+Creates a Streamlit in Snowflake application using only built-in packages:
+
+**Why no plotly/external packages?**
+Trial accounts have restrictions on External Access Integrations (EAI), which are required for the container runtime to download pip packages from pypi.org. By using only Streamlit's built-in chart types (`st.bar_chart`, `st.line_chart`, `st.metric`, `st.dataframe`), the app works on both warehouse runtime and container runtime without any EAI configuration.
+
+**Built-in chart alternatives**:
+| Instead of... | Use... |
+|---------------|--------|
+| `plotly.express.bar()` | `st.bar_chart(df, x=..., y=...)` |
+| `plotly.express.line()` | `st.line_chart(df, x=..., y=...)` |
+| `plotly.express.area()` | `st.area_chart(df, x=..., y=...)` |
+| Custom tables | `st.dataframe(df)` with column_config |
+
+**Connection pattern**:
+```python
+conn = st.connection("snowflake")
+df = conn.query("SELECT * FROM ...")
+st.dataframe(df)
+```
 
 This completes the workshop!
 """)
 
 
 render_key_concepts([
-    {"term": "Container Runtime", "definition": "The current SiS execution environment. Apps run on a compute pool, support any Python package, and use versioned stage syntax."},
-    {"term": "Compute Pool", "definition": "A managed pool of container nodes. Choose an instance family, set min/max nodes, and Snowflake handles provisioning."},
-    {"term": "External Access Integration", "definition": "Required for container runtime apps that install pip packages. Must allow egress to pypi.org."},
+    {"term": "Workspaces", "definition": "Snowsight's built-in IDE for authoring Streamlit apps. Supports file editing, preview (Run), and deployment — all without leaving the browser."},
+    {"term": "Built-in Charts", "definition": "Streamlit includes st.bar_chart, st.line_chart, st.area_chart, and st.map — no external packages needed. These work on all Snowflake runtimes without EAI."},
+    {"term": "External Access Integration (EAI)", "definition": "Required to install pip packages on container runtime. Trial accounts may have restrictions — using only built-in packages avoids this limitation entirely."},
 ])
 
 render_what_you_built([
-    "{{COMPUTE_POOL_NAME}} — compute pool for container runtime",
-    "{{STREAMLIT_APP_NAME}} — 2-page Streamlit app",
-    "Operations Dashboard with KPIs, charts, and data tables",
+    "{{STREAMLIT_APP_NAME}} — 2-page Streamlit app using built-in components",
+    "Operations Dashboard with KPIs and charts (no external dependencies)",
     "AI-powered chat interface connected to {{AGENT_NAME}}",
 ])
