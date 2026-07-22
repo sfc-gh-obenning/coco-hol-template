@@ -37,7 +37,6 @@ All files use `{{VARIABLE_NAME}}` placeholders. When generating a new workshop, 
 | `VENUE_NAME` | Venue name | The Ampersant |
 | `VENUE_CITY` | City/province | Calgary, AB |
 | `SIGNUP_LINK` | Trial signup URL with tracking | https://signup.snowflake.com/?t=... |
-| `ACCOUNT_LOCATOR_FORM_URL` | Google Form URL for account locator | https://docs.google.com/forms/... |
 | `RECOMMENDED_REGION` | AWS region suggestion | AWS Canada (Central) or US West (Oregon) |
 
 ### Schedule Variables

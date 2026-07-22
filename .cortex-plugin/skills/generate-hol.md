@@ -25,7 +25,6 @@ Ask the user the following questions using the ask_user_question tool. Group the
    https://app.snowflake.com/sfcogsops/snowhouse_aws_us_west_2/#/streamlit-apps/GROWTH.STREAMLIT_APPS.WINTERFEST/!/signup_link_generator
    Then provide the generated link here.
 6. **GitHub repo**: Provide a public Snowflake GitHub repo URL to commit to (e.g., `git@github.com:sfc-gh-yourname/coco-hol-cityname.git`). If you don't have one yet, I can help you create it with the `gh` CLI.
-7. **Account locator form** (optional): Do you have a Google Form URL for attendees to submit their account locators? If not, we'll skip this step.
 
 ## Phase 2: Setup & Context Gathering
 

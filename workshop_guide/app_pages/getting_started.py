@@ -35,20 +35,7 @@ After submitting the form, Snowflake sends an **activation link** to the email a
 
 st.space("small")
 
-st.markdown("#### Step 3: Register your account locator")
-
-with st.container(border=True):
-    st.markdown("""
-After activating your account, please submit your **account locator** via this form so we can enable additional features for the workshop:
-
-**[Submit your account locator]({{ACCOUNT_LOCATOR_FORM_URL}})**
-
-You can find your account locator in Snowsight by clicking your name in the bottom-left corner — it's displayed under your account name (e.g. `AB12345`).
-""")
-
-st.space("small")
-
-st.markdown("#### Step 4: Open Cortex Code")
+st.markdown("#### Step 3: Open Cortex Code")
 
 with st.container(border=True):
     st.markdown("""
@@ -59,7 +46,7 @@ Confirm you are using the **ACCOUNTADMIN** role — you can check and switch rol
 
 st.space("small")
 
-st.markdown("#### Step 5: Enable cross-region inference")
+st.markdown("#### Step 4: Enable cross-region inference")
 
 with st.container(border=True):
     st.markdown("""
