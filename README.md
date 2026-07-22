@@ -126,36 +126,105 @@ All files use `{{VARIABLE_NAME}}` placeholders. When generating a new workshop, 
 
 ## Generating a New Workshop
 
-### Using the Cortex Code Skill
+### Using the `/generate-hol` Skill (Recommended)
 
-The recommended way to generate a new workshop is with the Cortex Code skill:
+This repo includes a Cortex Code skill that automates the entire workshop creation process. Here's how to install and use it:
+
+#### Step 1: Install the skill
+
+Clone this template repo anywhere on your machine:
+
+```bash
+git clone https://github.com/sfc-gh-obenning/coco-hol-template.git
+cd coco-hol-template
+```
+
+Then install the plugin in Cortex Code by running this in your terminal:
+
+```bash
+cortex plugin install ./
+```
+
+Or if using CoCo Desktop, add the plugin via **Settings → Plugins → Add local plugin** and point to the cloned directory.
+
+#### Step 2: Generate your trial signup link
+
+Before running the skill, generate a tracked trial signup link at:
+
+https://app.snowflake.com/sfcogsops/snowhouse_aws_us_west_2/#/streamlit-apps/GROWTH.STREAMLIT_APPS.WINTERFEST/!/signup_link_generator
+
+Save the generated URL — you'll provide it to the skill.
+
+#### Step 3: Create a GitHub repo
+
+Create a new **public** repo on the Snowflake GitHub org for your workshop. Naming convention: `coco-hol-<city>` (e.g., `coco-hol-seattle`, `coco-hol-london`).
+
+```bash
+gh repo create sfc-gh-<your-username>/coco-hol-<city> --public
+```
+
+#### Step 4: Run the skill
+
+Open Cortex Code (Snowsight, CLI, or Desktop) and type:
 
 ```
 /generate-hol
 ```
 
-This will prompt you for:
-1. **City and venue** — Where is the workshop?
-2. **Date and time** — When does it run?
-3. **Domain/scenario** — What industry scenario? (ports, energy, healthcare, finance, etc.)
-4. **Signup link** — Trial URL with tracking parameter
-5. **GitHub repo** — Where to push the result
+The skill will interactively guide you through:
 
-The skill will:
-1. Copy this template
-2. Generate domain-specific CSV data
-3. Replace all `{{PLACEHOLDER}}` variables with scenario-appropriate content
-4. Create the zip file
-5. Commit and push to the target repo
+1. **Event details** — City, venue, date, time range, audience (customer vs general)
+2. **CoCo environment** — Snowsight, CLI, or Desktop (adjusts Getting Started instructions)
+3. **Domain/scenario** — Industry vertical for the hypothetical data (ports, energy, healthcare, finance, retail, manufacturing, etc.)
+4. **Signup link** — The trial URL you generated in Step 2
+5. **GitHub repo** — The repo URL from Step 3
+6. **Customer context** (if customer-specific) — The skill checks your Salesforce MCP connection for account data; if unavailable, it asks for manual context
+
+The skill then:
+- Clones this template
+- Generates realistic domain-specific CSV data (8-10 tables, ~1,500 rows)
+- Replaces all `{{PLACEHOLDER}}` variables with your scenario content
+- Creates the data zip file
+- Commits and pushes to your GitHub repo
+- Validates the deployment
+- Instructs you to deploy on Streamlit Community Cloud
+
+#### Step 5: Deploy to Streamlit Cloud
+
+After the skill pushes to GitHub:
+
+1. Go to [share.streamlit.io](https://share.streamlit.io)
+2. Click **New app** → connect your GitHub repo
+3. Set main file path to: `workshop_guide/streamlit_app.py`
+4. Deploy
+
+Your workshop will be live at `https://<app-name>.streamlit.app`.
+
+#### Step 6: Test and iterate
+
+Run through the workshop yourself end-to-end:
+- Download and unzip the CSV data
+- Execute all prompts in Cortex Code
+- Verify the semantic view, search service, and agent work correctly
+- Check the Streamlit app previews properly
+
+Tell the skill about any modifications needed — it can adjust data, prompts, scenario, or timing.
+
+#### Step 7: Share internally
+
+Once validated, share your workshop with other SEs! The same template can be adapted for similar industries. Post in the relevant Slack channels so others running workshops in your region or vertical can reuse your work.
 
 ### Manual Generation
+
+If you prefer not to use the skill:
 
 1. Clone this template repo
 2. Generate CSV data appropriate for your domain (see `data/` folder for structure)
 3. Replace all `{{VARIABLE}}` placeholders in all `.py` files
-4. Create a zip of the CSV files in `data/`
-5. Copy CSVs to `static/` for web serving
-6. Push to a new repo
+4. Create a zip of the CSV files: `cd workshop_guide/data && zip data.zip *.csv`
+5. Copy CSVs to `static/`: `cp workshop_guide/data/*.csv workshop_guide/static/`
+6. Push to a new GitHub repo
+7. Deploy on Streamlit Community Cloud (point to `workshop_guide/streamlit_app.py`)
 
 ## Deployment
 
