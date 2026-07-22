@@ -26,6 +26,11 @@ Paste the prompts below into Cortex Code **within Workspaces** so the generated 
 
 PROMPT_6_1 = """In Workspaces, create a Streamlit app called {{STREAMLIT_APP_NAME}} in {{DATABASE_NAME}}.{{SCHEMA_NAME}}.
 
+First, create a compute pool:
+- Name: {{COMPUTE_POOL_NAME}}
+- Use the CPU_X64_S instance family
+- Min and max nodes of 1
+
 The app should use ONLY built-in Streamlit features (no external pip packages like plotly — use st.bar_chart, st.line_chart, st.metric, and st.dataframe instead). This avoids needing External Access Integrations which are restricted on trial accounts.
 
 Build 2 pages:
@@ -89,11 +94,13 @@ This completes the workshop!
 
 render_key_concepts([
     {"term": "Workspaces", "definition": "Snowsight's built-in IDE for authoring Streamlit apps. Supports file editing, preview (Run), and deployment — all without leaving the browser."},
+    {"term": "Compute Pool", "definition": "A managed pool of container nodes available in trial accounts. Choose an instance family (CPU_X64_S), set min/max nodes, and Snowflake handles provisioning."},
     {"term": "Built-in Charts", "definition": "Streamlit includes st.bar_chart, st.line_chart, st.area_chart, and st.map — no external packages needed. These work on all Snowflake runtimes without EAI."},
     {"term": "External Access Integration (EAI)", "definition": "Required to install pip packages on container runtime. Trial accounts may have restrictions — using only built-in packages avoids this limitation entirely."},
 ])
 
 render_what_you_built([
+    "{{COMPUTE_POOL_NAME}} — compute pool for the Streamlit app",
     "{{STREAMLIT_APP_NAME}} — 2-page Streamlit app using built-in components",
     "Operations Dashboard with KPIs and charts (no external dependencies)",
     "AI-powered chat interface connected to {{AGENT_NAME}}",
